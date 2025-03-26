@@ -38,15 +38,16 @@ Breakdown:
 
 ## Tools & Libraries
 
-Component	Tech Used
-Preprocessing	IndicNLP, NLTK  
-Tokenization	indic_tokenize (word/sentence)  
-Translation	ai4bharat/indictrans2  
-Embeddings	ai4bharat/indic-bert, sentence-transformers  
-Knowledge Graph	Neo4j, NetworkX  
-Generation	ai4bharat/IndicGPT, mBART, T5  
-Summarization	Custom fine-tuned T5 models  
-Visualization	Matplotlib, pyvis  
+| Component        | Tech Used                                  |
+|------------------|--------------------------------------------|
+| Preprocessing    | IndicNLP, NLTK                             |
+| Tokenization     | `indic_tokenize` (word/sentence)           |
+| Translation      | `ai4bharat/indictrans2`                    |
+| Embeddings       | `ai4bharat/indic-bert`, `sentence-transformers` |
+| Knowledge Graph  | Neo4j, NetworkX                            |
+| Generation       | `ai4bharat/IndicGPT`, `mBART`, `T5`        |
+| Summarization    | Custom fine-tuned T5 models                |
+| Visualization    | Matplotlib, pyvis                          |
 
 
 
