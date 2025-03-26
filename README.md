@@ -32,7 +32,7 @@ Breakdown:
 ⸻
 
 ## Datasets Used
-	•	[✓] IIT Bombay Monolingual Hindi Corpus
+	• IIT Bombay Monolingual Hindi Corpus
 
 ⸻
 
