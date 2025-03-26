@@ -7,11 +7,11 @@ Welcome to GraphRAG-Hindi, an open-source project that brings graph-based retrie
 
 ## Why This Project?
 
-Most retrieval-augmented generation (RAG) pipelines are focused on English or multilingual text, but they often lack deep support for Indian languages. This project is an effort to:
-	•	Explore GraphRAG architecture using Hindi datasets.
-	•	Combine semantic understanding with structural relationships through knowledge graphs.
-	•	Enable query-focused summarization for long, noisy, real-world data (e.g., Wikipedia, monolingual corpora).
-	•	Open up a path for RAG systems in Indian public administration, policy, education, and more.
+Most retrieval-augmented generation (RAG) pipelines are focused on English or multilingual text, but they often lack deep support for Indian languages. This project is an effort to:  
+	• Explore GraphRAG architecture using Hindi datasets.  
+	• Combine semantic understanding with structural relationships through knowledge graphs.  
+	• Enable query-focused summarization for long, noisy, real-world data (e.g., Wikipedia, monolingual corpora).  
+	• Open up a path for RAG systems in Indian public administration, policy, education, and more.  
 
 ⸻
 
@@ -19,13 +19,13 @@ Most retrieval-augmented generation (RAG) pipelines are focused on English or mu
 
 Inspired by Microsoft’s From Local to Global: A Graph-Based Query-Focused Summarization and other leading papers in Graph-RAG.
 
-Breakdown:
-	•	Preprocessing: Clean raw data (stopword removal, normalization, tokenization).  
-	•	Text Chunking: Use sentence segmentation to break long documents.  
-	•	Element Summarization: Create summaries for each chunk (fine-tuned summarizer).  
-	•	Graph Construction: Create nodes for chunks and connect them based on semantic similarity.  
-	•	Community Detection: Cluster similar chunks (e.g., using Louvain or Leiden).  
-	•	Query-Time Generation: Retrieve relevant communities and generate answers using IndicGPT or similar models.  
+Breakdown:  
+	• Preprocessing: Clean raw data (stopword removal, normalization, tokenization).  
+	• Text Chunking: Use sentence segmentation to break long documents.  
+	• Element Summarization: Create summaries for each chunk (fine-tuned summarizer).  
+	• Graph Construction: Create nodes for chunks and connect them based on semantic similarity.  
+	• Community Detection: Cluster similar chunks (e.g., using Louvain or Leiden).  
+	• Query-Time Generation: Retrieve relevant communities and generate answers using IndicGPT or similar models.  
 
 
 
@@ -39,14 +39,14 @@ Breakdown:
 ## Tools & Libraries
 
 Component	Tech Used
-Preprocessing	IndicNLP, NLTK
-Tokenization	indic_tokenize (word/sentence)
-Translation	ai4bharat/indictrans2
-Embeddings	ai4bharat/indic-bert, sentence-transformers
-Knowledge Graph	Neo4j, NetworkX
-Generation	ai4bharat/IndicGPT, mBART, T5
-Summarization	Custom fine-tuned T5 models
-Visualization	Matplotlib, pyvis
+Preprocessing	IndicNLP, NLTK  
+Tokenization	indic_tokenize (word/sentence)  
+Translation	ai4bharat/indictrans2  
+Embeddings	ai4bharat/indic-bert, sentence-transformers  
+Knowledge Graph	Neo4j, NetworkX  
+Generation	ai4bharat/IndicGPT, mBART, T5  
+Summarization	Custom fine-tuned T5 models  
+Visualization	Matplotlib, pyvis  
 
 
 
@@ -54,31 +54,31 @@ Visualization	Matplotlib, pyvis
 
 ## How to Run
 
-	1.	Clone the repo
+	1. Clone the repo
 
 
 git clone https://github.com/yourname/GraphRAG_Hindi.git  
 cd GraphRAG_Hindi
 
-	2.	Create virtual env & install dependencies
+	2. Create virtual env & install dependencies
 
 conda create -n graphrag_env python=3.10
 conda activate graphrag_env
 pip install -r requirements.txt
 
-	3.	Preprocess Data
+	3. Preprocess Data
 
 python src/data/preprocess_data.py
 
-	4.	Translate English words to Hindi
+	4. Translate English words to Hindi
 
 python src/data/translation.py
 
-	5.	Run Graph Construction (Neo4j or NetworkX)
+	5. Run Graph Construction (Neo4j or NetworkX)
 
 python src/data/build_graph.py
 
-	6.	Trigger Query + Generate Answers
+	6. Trigger Query + Generate Answers
 
 python src/main.py --query "स्वतंत्रता संग्राम में महिला योगदान क्या था?"
 
@@ -87,12 +87,12 @@ python src/main.py --query "स्वतंत्रता संग्राम
 ⸻
 
 ## Current Status
-	•	✅ Preprocessing & Sentence Chunking
-	•	✅ English Word Translation (IndicTrans2)
-	•	✅ Word & Sentence Tokenization
-	•	⏳ Tailored Summarization (in progress)
-	•	⏳ Neo4j Graph Construction
-	•	⏳ Community Detection & Evaluation
+	✅ Preprocessing & Sentence Chunking
+	✅ English Word Translation (IndicTrans2)
+	✅ Word & Sentence Tokenization
+	⏳ Tailored Summarization (in progress)
+	⏳ Neo4j Graph Construction
+	⏳ Community Detection & Evaluation
 
 ⸻
 
@@ -103,9 +103,9 @@ Got ideas to improve RAG for Hindi or multilingual graphs? Feel free to fork and
 ⸻
 
 ## Acknowledgements
-	•	AI4Bharat for IndicTrans, IndicBERT, and IndicNLP
-	•	Microsoft Research for the From Local to Global paper
-	•	HuggingFace Transformers & Datasets
+	• AI4Bharat for IndicTrans, IndicBERT, and IndicNLP
+	• Microsoft Research for the From Local to Global paper
+	• HuggingFace Transformers & Datasets
 
 ⸻
 
