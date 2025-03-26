@@ -18,19 +18,25 @@ Most retrieval-augmented generation (RAG) pipelines are focused on English or mu
 
 Inspired by Microsoft’s *From Local to Global: A Graph-Based Query-Focused Summarization* and other leading papers in Graph-RAG.
 
-Breakdown:  
-• Preprocessing:   
-    Clean raw data (stopword removal, normalization, tokenization).  
-• Text Chunking:   
-    Use sentence segmentation to break long documents.  
-• Element Summarization:   
-    Create summaries for each chunk (fine-tuned summarizer).  
-• Graph Construction:   
-    Create nodes for chunks and connect them based on semantic similarity.  
-• Community Detection:   
-    Cluster similar chunks (e.g., using Louvain or Leiden).  
-• Query-Time Generation:   
-    Retrieve relevant communities and generate answers using IndicGPT or similar models.  
+### Breakdown:
+
+- **Preprocessing:**  
+  &nbsp;&nbsp;&nbsp;&nbsp;Clean raw data (stopword removal, normalization, tokenization).
+
+- **Text Chunking:**  
+  &nbsp;&nbsp;&nbsp;&nbsp;Use sentence segmentation to break long documents.
+
+- **Element Summarization:**  
+  &nbsp;&nbsp;&nbsp;&nbsp;Create summaries for each chunk (fine-tuned summarizer).
+
+- **Graph Construction:**  
+  &nbsp;&nbsp;&nbsp;&nbsp;Create nodes for chunks and connect them based on semantic similarity.
+
+- **Community Detection:**  
+  &nbsp;&nbsp;&nbsp;&nbsp;Cluster similar chunks (e.g., using Louvain or Leiden).
+
+- **Query-Time Generation:**  
+  &nbsp;&nbsp;&nbsp;&nbsp;Retrieve relevant communities and generate answers using IndicGPT or similar models.
 
 ⸻
 
