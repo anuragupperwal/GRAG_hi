@@ -1,15 +1,15 @@
 
-Here’s a detailed, human-written README.md tailored for your GraphRAG project on Hindi datasets (IIT Bombay, Dakshina, etc.), with a clear structure, explanations, and a personal touch to reflect real-world open-source documentation.
+# Here’s a detailed, human-written README.md tailored for your GraphRAG project on Hindi datasets (IIT Bombay, Dakshina, etc.), with a clear structure, explanations, and a personal touch to reflect real-world open-source documentation.
 
 ⸻
 
-🇮🇳 GraphRAG-Hindi: Graph-based Retrieval-Augmented Generation for Hindi Text
+🇮🇳 ##GraphRAG-Hindi: Graph-based Retrieval-Augmented Generation for Hindi Text
 
 Welcome to GraphRAG-Hindi, an open-source project that brings graph-based retrieval-augmented generation (RAG) to the Hindi language using publicly available datasets and open-source models. The goal is to build an intelligent QA/summarization system that retrieves relevant context via knowledge graphs and generates natural Hindi responses using state-of-the-art language models.
 
 ⸻
 
-Why This Project?
+##Why This Project?
 
 Most retrieval-augmented generation (RAG) pipelines are focused on English or multilingual text, but they often lack deep support for Indian languages. This project is an effort to:
 	•	Explore GraphRAG architecture using Hindi datasets.
@@ -19,20 +19,9 @@ Most retrieval-augmented generation (RAG) pipelines are focused on English or mu
 
 ⸻
 
-Project Pipeline
+##Project Pipeline
 
 	Inspired by Microsoft’s From Local to Global: A Graph-Based Query-Focused Summarization and other leading papers in Graph-RAG.
-
-                  Indexing Time (Preprocessing)                  Query Time (Inference)
-┌────────────┐     ┌────────────┐     ┌──────────────┐           ┌─────────────────────┐
-│ Raw Corpus │ ──▶ │ Text Chunks│ ──▶ │ Element Inst │ ──▶ ... ─▶│ Community Answers   │
-└────────────┘     └────────────┘     └──────────────┘           └─────────────────────┘
-                            │                         ↑
-                            ▼                         │
-                     Tailored Summaries     ◀─────────┘
-                            │
-                            ▼
-                    Knowledge Graph (Neo4j)
 
 Breakdown:
 	•	Preprocessing: Clean raw data (stopword removal, normalization, tokenization).
@@ -46,12 +35,12 @@ Breakdown:
 
 ⸻
 
-Datasets Used
+##Datasets Used
 	•	[✓] IIT Bombay Monolingual Hindi Corpus
 
 ⸻
 
-Tools & Libraries
+##Tools & Libraries
 
 Component	Tech Used
 Preprocessing	IndicNLP, NLTK
@@ -67,10 +56,12 @@ Visualization	Matplotlib, pyvis
 
 ⸻
 
-How to Run
+##How to Run
+
 	1.	Clone the repo
 
-git clone https://github.com/yourname/GraphRAG_Hindi.git
+
+git clone https://github.com/yourname/GraphRAG_Hindi.git  
 cd GraphRAG_Hindi
 
 	2.	Create virtual env & install dependencies
@@ -99,7 +90,7 @@ python src/main.py --query "स्वतंत्रता संग्राम
 
 ⸻
 
-🧪 Current Status
+##Current Status
 	•	✅ Preprocessing & Sentence Chunking
 	•	✅ English Word Translation (IndicTrans2)
 	•	✅ Word & Sentence Tokenization
@@ -109,28 +100,26 @@ python src/main.py --query "स्वतंत्रता संग्राम
 
 ⸻
 
-Contributing
+#Contributing
 
 Got ideas to improve RAG for Hindi or multilingual graphs? Feel free to fork and send PRs.
 
 ⸻
 
-📢 Acknowledgements
+##Acknowledgements
 	•	AI4Bharat for IndicTrans, IndicBERT, and IndicNLP
 	•	Microsoft Research for the From Local to Global paper
 	•	HuggingFace Transformers & Datasets
 
 ⸻
 
-⭐️ Star this Repo
+##⭐️ Star this Repo
 
 If this project inspires or helps you, please give it a ⭐️. It keeps me going!
 
 ⸻
-
-Would you like me to convert this into a markdown file (README.md) and drop it in your GRAG_HI repo folder?
-
-
+  
+  
 '''
 venv: python3 -m venv graphrag_env
 
