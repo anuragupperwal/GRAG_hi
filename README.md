@@ -20,17 +20,17 @@ Inspired by Microsoft’s *From Local to Global: A Graph-Based Query-Focused Sum
 
 Breakdown:  
 • Preprocessing:   
-        Clean raw data (stopword removal, normalization, tokenization).  
+    Clean raw data (stopword removal, normalization, tokenization).  
 • Text Chunking:   
-        Use sentence segmentation to break long documents.  
+    Use sentence segmentation to break long documents.  
 • Element Summarization:   
-        Create summaries for each chunk (fine-tuned summarizer).  
+    Create summaries for each chunk (fine-tuned summarizer).  
 • Graph Construction:   
-        Create nodes for chunks and connect them based on semantic similarity.  
+    Create nodes for chunks and connect them based on semantic similarity.  
 • Community Detection:   
-        Cluster similar chunks (e.g., using Louvain or Leiden).  
+    Cluster similar chunks (e.g., using Louvain or Leiden).  
 • Query-Time Generation:   
-        Retrieve relevant communities and generate answers using IndicGPT or similar models.  
+    Retrieve relevant communities and generate answers using IndicGPT or similar models.  
 
 ⸻
 
@@ -55,32 +55,32 @@ Breakdown:
 
 ## How to Run
 
-1. Clone the repo  
+    1. Clone the repo  
 
-    git clone https://github.com/yourname/GraphRAG_Hindi.git  
-    cd GraphRAG_Hindi  
+        git clone https://github.com/yourname/GraphRAG_Hindi.git  
+        cd GraphRAG_Hindi  
 
-2.	Create virtual env & install dependencies
+    2.	Create virtual env & install dependencies
 
-    conda create -n graphrag_env python=3.10  
-    conda activate graphrag_env  
-    pip install -r requirements.txt
+        conda create -n graphrag_env python=3.10  
+        conda activate graphrag_env  
+        pip install -r requirements.txt
 
-3.	Preprocess Data  
+    3.	Preprocess Data  
 
-    python src/data/preprocess_data.py
+        python src/data/preprocess_data.py
 
-4.	Run Graph Construction (Neo4j or NetworkX)  
+    4.	Run Graph Construction (Neo4j or NetworkX)  
 
-    python src/data/build_graph.py  
+        python src/data/build_graph.py  
 
-5.	Trigger Query + Generate Answers
+    5.	Trigger Query + Generate Answers
 
-    python src/main.py --query "स्वतंत्रता संग्राम में महिला योगदान क्या था?"   
+        python src/main.py --query "स्वतंत्रता संग्राम में महिला योगदान क्या था?"   
 
 ⸻
 
-Current Status
+### Current Status
 
 ✅ Preprocessing & Sentence Chunking  
 ✅ Word & Sentence Tokenization  
@@ -90,13 +90,13 @@ Current Status
 
 ⸻
 
-Contributing
+### Contributing
 
 Got ideas to improve RAG for Hindi or multilingual graphs? Feel free to fork and send PRs.
 
 ⸻
 
-Acknowledgements
+### Acknowledgements
 
 • AI4Bharat for IndicGPT, IndicBERT, and IndicNLP  
 • Microsoft Research for the From Local to Global paper  
@@ -104,7 +104,7 @@ Acknowledgements
 
 ⸻
 
-⭐️ Star this Repo
+###⭐️ Star this Repo
 
 If this project inspires or helps you, please give it a ⭐️. It keeps me going!
 
