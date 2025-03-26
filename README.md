@@ -49,38 +49,38 @@ Breakdown:
 
 ## How to Run
 
-1. Clone the repo  
+    1. Clone the repo  
 
-git clone https://github.com/yourname/GraphRAG_Hindi.git  
-cd GraphRAG_Hindi  
+        git clone https://github.com/yourname/GraphRAG_Hindi.git  
+        cd GraphRAG_Hindi  
 
-2.	Create virtual env & install dependencies
+    2.	Create virtual env & install dependencies
 
-    conda create -n graphrag_env python=3.10  
-    conda activate graphrag_env  
-    pip install -r requirements.txt
+        conda create -n graphrag_env python=3.10  
+        conda activate graphrag_env  
+        pip install -r requirements.txt
 
-3.	Preprocess Data  
+    3.	Preprocess Data  
 
-    python src/data/preprocess_data.py
+        python src/data/preprocess_data.py
 
-4.	Run Graph Construction (Neo4j or NetworkX)  
+    4.	Run Graph Construction (Neo4j or NetworkX)  
 
-    python src/data/build_graph.py  
+        python src/data/build_graph.py  
 
-5.	Trigger Query + Generate Answers
+    5.	Trigger Query + Generate Answers
 
-    python src/main.py --query "स्वतंत्रता संग्राम में महिला योगदान क्या था?"   
+        python src/main.py --query "स्वतंत्रता संग्राम में महिला योगदान क्या था?"   
 
 ⸻
 
 Current Status
 
-✅ Preprocessing & Sentence Chunking
-✅ Word & Sentence Tokenization
-⏳ Tailored Summarization (in progress)
-⏳ Neo4j Graph Construction
-⏳ Community Detection & Evaluation
+✅ Preprocessing & Sentence Chunking  
+✅ Word & Sentence Tokenization  
+⏳ Tailored Summarization (in progress)  
+⏳ Neo4j Graph Construction  
+⏳ Community Detection & Evaluation  
 
 ⸻
 
@@ -92,9 +92,9 @@ Got ideas to improve RAG for Hindi or multilingual graphs? Feel free to fork and
 
 Acknowledgements
 
-• AI4Bharat for IndicGPT, IndicBERT, and IndicNLP
-• Microsoft Research for the From Local to Global paper
-• HuggingFace Transformers & Datasets
+• AI4Bharat for IndicGPT, IndicBERT, and IndicNLP  
+• Microsoft Research for the From Local to Global paper  
+• HuggingFace Transformers & Datasets  
 
 ⸻
 
@@ -107,4 +107,4 @@ If this project inspires or helps you, please give it a ⭐️. It keeps me goin
 venv: python3 -m venv graphrag_env
 
 activate: source graphrag_env/bin/activate  
-          conda deactivate  # if another env or base is active
+conda deactivate  # if another env or base is active
