@@ -51,7 +51,6 @@ Breakdown:
 
 1. Clone the repo  
 
-```bash
 git clone https://github.com/yourname/GraphRAG_Hindi.git  
 cd GraphRAG_Hindi  
 
