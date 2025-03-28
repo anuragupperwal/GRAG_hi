@@ -110,7 +110,7 @@ Got ideas to improve RAG for Hindi or multilingual graphs? Feel free to fork and
 
 ⸻
 
-###⭐️ Star this Repo
+### ⭐️ Star this Repo
 
 If this project inspires or helps you, please give it a ⭐️. It keeps me going!
 
@@ -120,3 +120,8 @@ venv: python3 -m venv graphrag_env
 
 activate: source graphrag_env/bin/activate  
 conda deactivate  # if another env or base is active
+
+
+----
+
+mT5 has a token limit (~512 tokens)
