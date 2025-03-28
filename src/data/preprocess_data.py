@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import re
+import matplotlib.pyplot as plt
 
 from nltk.corpus import stopwords
 # from indicnlp.normalize import IndicNormalizerFactory
@@ -14,7 +15,7 @@ TOKENIZED_OUTPUT_PATH = "../../data/processed/tokenized_IITB.csv"
 CLEANED_OUTPUT_PATH = "../../data/processed/cleaned_IITB.csv"
 
 
-raw_data = pd.read_csv(RAW_DATA_PATH, nrows=10000)
+raw_data = pd.read_csv(RAW_DATA_PATH, nrows=1000)
 sentences = raw_data['text'].fillna("").astype(str).tolist()
 
 
@@ -46,7 +47,13 @@ cleaned_sentences = [remove_stopwords_indic(line) for line in sentences]
 tokenized_sentences = sentence_tokenize_text_grouped(cleaned_sentences)
 
 
-# ==== Save Tokenized Data ====
+print("\nbefore saving (first few lines):\n")
+for idx, line in enumerate(tokenized_sentences[:5]):
+    print(f"{idx}: {line}")
+
+
+#Save Tokenized Data
 os.makedirs(os.path.dirname(TOKENIZED_OUTPUT_PATH), exist_ok=True)
-pd.DataFrame({"text": tokenized_sentences}).to_csv(TOKENIZED_OUTPUT_PATH, index=False, encoding='utf-8')
+joined_sentences = [" <s> ".join(sent_list) for sent_list in tokenized_sentences]
+pd.DataFrame({"text": joined_sentences}).to_csv(TOKENIZED_OUTPUT_PATH, index=False, encoding='utf-8')
 print(f"✅ Tokenized data saved to: {TOKENIZED_OUTPUT_PATH}")
