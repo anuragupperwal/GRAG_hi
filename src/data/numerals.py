@@ -1,39 +1,35 @@
 import re
-import csv
+import pandas as pd
 
-file_path = "./ghu.hi"
-output_path = "/Users/nawabkhan/Baby_Blue/GraphRAG_Project/data/processed/cleaned_1M(1).csv"
+def replace_numerics(input_csv, output_csv, text_column="text", max_lines=10000):
+    """
+    Cleans a Hindi text corpus stored in a CSV file by:
+    - Removing numbered paragraph indicators
+    - Removing ": <number> :" patterns
+    - Removing Roman numerals (except 'I')
+    - Converting Western numerals (0-9) to Hindi numerals (०-९)
+    - Keeping only the first `max_rows` lines
+    """
 
-# Regex patterns
+    # Regex patterns
+    start_number_pattern = re.compile(r'^\s*\d+\s+')  # Lines starting with "<space><number><space>"
+    colon_number_pattern = re.compile(r':\s*\d+\s*:')  # Matches ": <number> :"
+    roman_pattern = re.compile(r'\b(?=[MDCLXVI])M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\b')  # Roman numerals
+    western_to_hindi_map = str.maketrans("0123456789", "०१२३४५६७८९")  # Western → Hindi numeral mapping
 
-#lines part of some paragraph are numbered from  2 to whatever
-start_number_pattern = re.compile(r'^\s*\d+\s+')  # Lines starting with "<space><number><space>"
 
-# to handl patterns at start of lines like : 72: तीसरा क्लू: शाहिद का सरेंडर
-colon_number_pattern = re.compile(r':\s*\d+\s*:')  # Matches ": <number> :"
+    df = pd.read_csv(input_csv, encoding="utf-8", nrows=max_lines)
+    def clean_text(text):
+        if pd.isna(text):  # Handle NaN values
+            return ""
+        text = str(text)  # Ensure string format
+        if start_number_pattern.match(text):  # Skip lines that start with a number
+            return ""
+        text = roman_pattern.sub(lambda x: "I" if x.group() == "I" else "", text).strip()  # Remove Roman numerals but keep "I"
+        text = colon_number_pattern.sub("", text)  # Remove ": <number> :"
+        text = text.translate(western_to_hindi_map)  # Convert Western numerals to Hindi
+        return text
 
-#there are some roman numerals. removing them but not "I" (maybe the english word/letter)
-roman_pattern = re.compile(r'\b(?=[MDCLXVI])M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\b')  # Roman numerals
-
-# Western → Hindi numeral mapping
-western_to_hindi_map = str.maketrans("0123456789", "०१२३४५६७८९")
-
-max_lines = 1_000_000  # Process first 1M lines
-processed_lines = 0
-
-with open(file_path, "r", encoding="utf-8") as file, open(output_path, "w", encoding="utf-8", newline="") as csvfile:
-    writer = csv.writer(csvfile)
-    
-    for _ in range(max_lines):
-        line = file.readline()
-        if not line:
-            break
-        if start_number_pattern.match(line):  # Skip lines that start with a number
-            continue
-        cleaned_line = roman_pattern.sub(lambda x: "I" if x.group() == "I" else "", line).strip()  # Remove Roman numerals but keep "I"
-        cleaned_line = colon_number_pattern.sub("", cleaned_line)  # Remove ": <number> :"
-        cleaned_line = cleaned_line.translate(western_to_hindi_map)  # Convert Western numerals to Hindi
-        writer.writerow([cleaned_line])
-        processed_lines += 1
-
-print(f"✅ Processed {processed_lines} lines. Saved cleaned text to 'cleaned_1M.csv'.")
+    df[text_column] = df[text_column].apply(clean_text)
+    df = df[df[text_column] != ""]
+    df.to_csv(output_csv, index=False, encoding="utf-8")
