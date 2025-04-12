@@ -28,13 +28,15 @@ def summarize_chunks(chunks):
     return summaries
 
 
-def summarize_corpus(input_path, output_path, chunk_size=5, max_lines=100):
+def summarize_corpus(input_path, output_path, chunk_size=5, max_lines=10000):
     """Main callable function to run summarization pipeline."""
     
     print(f"Loading tokenized input from: {input_path}")
     df = pd.read_csv(input_path, nrows=max_lines)
     sentences = df['text'].fillna("").astype(str).tolist()
 
+    print(f"Loaded {len(df)} rows for summarization.")
+    
     print("Grouping sentences...")
     grouped_chunks = group_sentences(sentences, chunk_size=chunk_size)
 
@@ -57,5 +59,5 @@ if __name__ == "__main__":
         input_path=TOKENIZED_DATA_PATH,
         output_path=SUMMARY_OUTPUT_PATH,
         chunk_size=5,
-        max_lines=100
+        max_lines=10000
     )

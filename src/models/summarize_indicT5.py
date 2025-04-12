@@ -27,7 +27,7 @@ def group_sentences(sent_list, group_size=3):
     return grouped
 
 # --------- Summarization Function ---------
-def summarize_text(text_list, max_input_length=512, max_summary_length=100):
+def summarize_text(text_list, max_input_length=512, max_summary_length=10000):
     summaries = []
     for chunk in tqdm(text_list, desc="🧠 Generating summaries"):
         if not chunk.strip():

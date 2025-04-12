@@ -7,16 +7,16 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INPUT_PATH = os.path.join(PROJECT_ROOT, "data/processed/summarized_IITB.csv")
 OUTPUT_PATH = os.path.join(PROJECT_ROOT, "data/processed/summarized_embeddings.npy")
 
-model_name = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+SUMMARY_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
 '''
     Converts each sentence into a dense vector of 384 dimensions
     row represents one sentence’s meaning captured in 384 numbers.
 '''
-def generate_embeddings(INPUT_PATH=INPUT_PATH, OUTPUT_PATH=OUTPUT_PATH, model_name=model_name, nrows=None):
+def generate_embeddings(INPUT_PATH=INPUT_PATH, OUTPUT_PATH=OUTPUT_PATH, nrows=10000):
     df = pd.read_csv(INPUT_PATH, nrows=nrows)
     sentences = df["summary"].fillna("").astype(str).tolist()
-    model = SentenceTransformer(model_name)
+    model = SentenceTransformer(SUMMARY_MODEL)
     embeddings = model.encode(sentences, convert_to_numpy=True)
     np.save(OUTPUT_PATH, embeddings)
     print(f"Embeddings saved at {OUTPUT_PATH} | Shape: {embeddings.shape}")

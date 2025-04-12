@@ -7,7 +7,7 @@ from data.build_graph import build_knowledge_graph
 
 
 # RAW_DATA_PATH = "../../data/raw/monolingual-n/raw_IITB.csv"
-PROCESSED_OUTPUT_PATH = "data/processed_corpus.csv"
+# PROCESSED_OUTPUT_PATH = "data/processed_corpus.csv"
 SUMMARY_OUTPUT_PATH = "src/models/summarize_csebuetnlp_mT5.py"
 
 
@@ -16,39 +16,31 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Define absolute paths
 RAW_DATA_PATH = os.path.join(PROJECT_ROOT, "data/raw/monolingual-n/raw_IITB.csv")
-PROCESSED_OUTPUT_PATH = os.path.join(PROJECT_ROOT, "data/processed")
-TOKENIZED_INPUT = os.path.join(PROJECT_ROOT, "data/processed/tokenized_IITB.csv")
+TOKENIZED_PATH = os.path.join(PROJECT_ROOT, "data/processed/tokenized_IITB.csv")
 SUMMARY_PATH = os.path.join(PROJECT_ROOT, "data/processed/summarized_IITB.csv")
 EMBEDDING_PATH = os.path.join(PROJECT_ROOT, "data/processed/summarized_embeddings.npy")
 GRAPH_PATH = os.path.join(PROJECT_ROOT, "data/knowledge_graph/summary_graph.graphml")
 
 
-SUMMARY_MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-
-print("RAW_DATA_PATH:", RAW_DATA_PATH)  # Debugging
-print("PROCESSED_OUTPUT_PATH:", PROCESSED_OUTPUT_PATH)  # Debugging
-
-
 print("Running preprocessing")
-# preprocess_hindi_corpus(RAW_DATA_PATH, max_lines=10000)
+# preprocess_hindi_corpus(RAW_DATA_PATH, max_lines=10000, project_root=PROJECT_ROOT)
 
 print("Running summarization")
 # summarize_corpus(
-#     input_path=TOKENIZED_INPUT,
+#     input_path=TOKENIZED_PATH,
 #     output_path=SUMMARY_PATH,
 #     chunk_size=5,
-#     max_lines=10000
+#     max_lines=1000
 # )
 print("Summarization Completed")
 
-# generate_embeddings(SUMMARY_PATH, EMBEDDING_PATH, SUMMARY_MODEL_NAME)
+# generate_embeddings(SUMMARY_PATH, EMBEDDING_PATH)
 # test_embeddings(EMBEDDING_PATH)
 
-# Call graph builder
 build_knowledge_graph(
     summary_path=SUMMARY_PATH,
     embedding_path=EMBEDDING_PATH,
     graph_path=GRAPH_PATH,
-    max_rows=10000,  # Optional
-    similarity_threshold=0.5  # Optional
+    max_rows=100,
+    similarity_threshold=0.5 
 )

@@ -49,23 +49,24 @@ def plot_cleaning_results(total_lines: int, cleaned_lines: int, save_path: str):
     print(f"Pie chart saved to {save_path}")
 
 
-def preprocess_hindi_corpus(RAW_DATA_PATH, max_lines=10000, stopwords_path=STOPWORDS_PATH, chart_path=CHART_OUTPUT_PATH):
+def preprocess_hindi_corpus(RAW_DATA_PATH, max_lines=10000, stopwords_path=STOPWORDS_PATH, chart_path=CHART_OUTPUT_PATH, project_root=None):
     """Runs the complete preprocessing pipeline step by step."""
 
-    PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     #absolute paths
     input1 = RAW_DATA_PATH
-    output1 = os.path.join(PROJECT_ROOT, "data/raw/monolingual-n/cleaned_output.csv")
-    output2 = os.path.join(PROJECT_ROOT, "data/raw/monolingual-n/numeric_replaced.csv")
-    final_output = os.path.join(PROJECT_ROOT, "data/processed/processed_corpus.csv")    
+    print("this is the test print to check project_root", project_root)
+    output1 = os.path.join(project_root, "data/raw/monolingual-n/cleaned_output.csv")
+    output2 = os.path.join(project_root, "data/raw/monolingual-n/numeric_replaced.csv")
+    final_output = os.path.join(project_root, "data/processed/tokenized_IITB.csv")    
 
+    
     # Step 1: Convert .hi file to CSV
     # load_raw_data(input1)
     raw_data = pd.read_csv(input1, nrows=max_lines)
 
     # Step 2: Remove English lines
     os.makedirs(os.path.dirname(output1), exist_ok=True)  # Ensure directory exists
-    remove_eng_lines.remove_lines(input1, output1, max_lines=10000)
+    remove_eng_lines.remove_lines(input1, output1, max_lines=max_lines)
 
     # Step 3: Convert numerics (123 → १२३)
     os.makedirs(os.path.dirname(output2), exist_ok=True) 
