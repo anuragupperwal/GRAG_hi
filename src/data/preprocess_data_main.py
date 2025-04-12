@@ -1,13 +1,12 @@
 import os
 import pandas as pd
-import convert_to_csv
-import remove_eng_lines
-import numerals
+from data.convert_to_csv import load_raw_data
+from data import remove_eng_lines, numerals
 import matplotlib.pyplot as plt
 from indicnlp.tokenize.sentence_tokenize import sentence_split
 
 # === CONFIG ===
-STOPWORDS_PATH = "./stopwords-hi.txt"
+STOPWORDS_PATH = os.path.join(os.path.dirname(__file__), "stopwords-hi.txt")
 CHART_OUTPUT_PATH = "../../reports/figures/cleaning_pie_chart.png"
 
 
@@ -47,30 +46,36 @@ def plot_cleaning_results(total_lines: int, cleaned_lines: int, save_path: str):
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     plt.savefig(save_path)
     plt.close()
-    print(f"✅ Pie chart saved to {save_path}")
+    print(f"Pie chart saved to {save_path}")
 
 
-def preprocess_hindi_corpus(RAW_DATA_PATH, final_output, max_lines=10000):
+def preprocess_hindi_corpus(RAW_DATA_PATH, max_lines=10000, stopwords_path=STOPWORDS_PATH, chart_path=CHART_OUTPUT_PATH):
     """Runs the complete preprocessing pipeline step by step."""
 
+    PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    #absolute paths
+    input1 = RAW_DATA_PATH
+    output1 = os.path.join(PROJECT_ROOT, "data/raw/monolingual-n/cleaned_output.csv")
+    output2 = os.path.join(PROJECT_ROOT, "data/raw/monolingual-n/numeric_replaced.csv")
+    final_output = os.path.join(PROJECT_ROOT, "data/processed/processed_corpus.csv")    
+
     # Step 1: Convert .hi file to CSV
-    # convert_to_csv.load_raw_data(RAW_DATA_PATH)
-    raw_data = pd.read_csv(RAW_DATA_PATH, nrows=100)
+    # load_raw_data(input1)
+    raw_data = pd.read_csv(input1, nrows=max_lines)
 
     # Step 2: Remove English lines
-    input1 = "../../data/raw/monolingual-n/raw_IITB.csv"
-    output1 = "../../data/raw/monolingual-n/cleaned_output.csv"
-    remove_eng_lines.remove_lines(input1, output1)
+    os.makedirs(os.path.dirname(output1), exist_ok=True)  # Ensure directory exists
+    remove_eng_lines.remove_lines(input1, output1, max_lines=10000)
 
     # Step 3: Convert numerics (123 → १२३)
-    output2 = "../../data/raw/monolingual-n/numeric_replaced.csv"
+    os.makedirs(os.path.dirname(output2), exist_ok=True) 
     numerals.replace_numerics(output1, output2)
 
     # Step 4: Stopword removal
     raw_data = pd.read_csv(output2, nrows=max_lines)
     total_lines = len(raw_data)
     sentences = raw_data['text'].fillna("").astype(str).tolist()
-    stopwords = load_indic_stopwords(STOPWORDS_PATH)
+    stopwords = load_indic_stopwords(stopwords_path)
     cleaned_sentences = [remove_stopwords_indic(line, stopwords) for line in sentences]
 
     # Step 5: Sentence tokenization
@@ -79,7 +84,7 @@ def preprocess_hindi_corpus(RAW_DATA_PATH, final_output, max_lines=10000):
 
     os.makedirs(os.path.dirname(final_output), exist_ok=True)
     pd.DataFrame({"text": joined_sentences}).to_csv(final_output, index=False, encoding='utf-8')
-    print(f"✅ Preprocessing completed! Final output saved at: {final_output}")
+    print(f"Preprocessing completed! Final output saved at: {final_output}")
 
     # Optional Step 6: Pie Chart
     # cleaned_lines = len([line for line in sentences if line.strip() and len(line.strip()) > 5])
@@ -87,7 +92,9 @@ def preprocess_hindi_corpus(RAW_DATA_PATH, final_output, max_lines=10000):
 
 
 # === Entry Point ===
-if __name__ == "__main__":
-    RAW_DATA_PATH = "../../data/raw/monolingual-n/raw_IITB.csv"
-    final_output = "../../data/processed/processed_corpus.csv"
-    preprocess_hindi_corpus(RAW_DATA_PATH, final_output, 100)
+# if __name__ == "__main__":
+#     RAW_DATA_PATH = os.path.join(os.path.dirname(__file__), "data/raw/monolingual-n/raw_IITB.csv")
+#     RAW_DATA_PATH = os.path.abspath(RAW_DATA_PATH)  # Convert to absolute path
+
+#     print(RAW_DATA_PATH*5)
+#     preprocess_hindi_corpus(RAW_DATA_PATH, 100)
