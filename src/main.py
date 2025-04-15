@@ -6,6 +6,7 @@ from data.preprocess_data_main import preprocess_hindi_corpus
 from models.summarize_csebuetnlp_mT5 import summarize_corpus
 from data.build_graph import build_knowledge_graph
 from data.community_summarization import summarize_communities
+from models.retrieval.retrieve import retrieve_top_k_results
 
 
 # RAW_DATA_PATH = "../../data/raw/monolingual-n/raw_IITB.csv"
@@ -47,5 +48,16 @@ print("Summarization Completed")
 #     similarity_threshold=0.5 
 # )
 
-G = nx.read_graphml(GRAPH_PATH)
-summarize_communities(G, output_path_directory=SUMMARY_PATH)
+# G = nx.read_graphml(GRAPH_PATH)
+# summarize_communities(G, output_path_directory=SUMMARY_PATH)
+
+# retrieve based on query
+query = input("Enter your query: ")
+top_results = retrieve_top_k_results(query)
+print("\n🎯 Top Matching Community Summaries:\n")
+for idx, row in top_results.iterrows():
+    print(f"Community: {idx} | Score: {row['score']:.4f}")
+    print(f"Summary: {row['summary']}\n")
+
+
+# आईटी नौकरियों के बारे में आप क्या सोचते हैं?

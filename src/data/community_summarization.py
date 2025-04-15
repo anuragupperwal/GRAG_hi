@@ -10,10 +10,13 @@ import networkx as nx
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
+
 MODEL_NAME = "csebuetnlp/mT5_multilingual_XLSum"  #"ai4bharat/IndicT5-Summarization"
+
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
-model = model.to("cuda" if torch.cuda.is_available() else "cpu")
+# model = model.to("cuda" if torch.cuda.is_available() else "cpu")
+
 
 def summarize_with_indicT5(texts, max_input_length=1024, max_output_length=256):
     """
@@ -64,7 +67,7 @@ def recursive_summarize(sentences, chunk_size=10, max_tokens=1000):
         # max_output_length = max(max_output_length, MIN_SUMMARY_LENGTH)   # minimum threshold to avoid empty summaries
 
         MIN_SUMMARY_LENGTH = 60
-        compression_ratio = 0.6
+        compression_ratio = 0.1
         if total_tokens < MIN_SUMMARY_LENGTH:
             max_output_length = MIN_SUMMARY_LENGTH
         else:
@@ -74,19 +77,11 @@ def recursive_summarize(sentences, chunk_size=10, max_tokens=1000):
 
         # current_sentences = summarize_with_indicT5(chunks, max_output_length=max_output_length)
 
-
-        #option 1.1
-        # max_input_lengths = [min(len(tokenizer.encode(chunk)) + 20, 1024) for chunk in chunks]
-        # current_sentences = [
-        #     summarize_with_indicT5([chunk], max_input_length=length, max_output_length=max_output_length)[0]
-        #     for chunk, length in zip(chunks, max_input_lengths)
-        # ]
-
         # option 1.1.1
         current_sentences = []
         for chunk in chunks:
             input_len = min(len(tokenizer.encode(chunk)) + 20, 1024)
-            summary = summarize_with_indicT5([chunk], max_input_length=input_len, max_output_length=max_output_length)[0]
+            summary = summarize_with_indicT5([chunk], max_output_length=max_output_length)[0]
             current_sentences.append(summary)
 
         # Optional exit condition
