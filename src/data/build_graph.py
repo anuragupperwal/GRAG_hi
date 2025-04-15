@@ -11,7 +11,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from networkx.algorithms.community import greedy_modularity_communities
 from collections import defaultdict
 
-from community_summarization import summarize_communities
+from data.community_summarization import summarize_communities
 
 
 def visualize_with_plotly(G):
@@ -59,32 +59,6 @@ def visualize_with_plotly(G):
                         yaxis=dict(showgrid=False, zeroline=False)))
     
     fig.show()
-
-def visualize_graph(G):
-    plt.figure(figsize=(12, 8))
-    # pos = nx.spring_layout(G, seed=42, k=0.4) #layout1
-    pos = nx.kamada_kawai_layout(G) #layout2
-
-    # Get communities and assign colors
-    communities = set(nx.get_node_attributes(G, "community").values())
-    color_map = cm.get_cmap("tab20", len(communities))  # distinct colors
-    node_colors = [color_map(G.nodes[node]["community"]) for node in G.nodes()]
-
-    edge_weights = [G[u][v]["weight"] for u, v in G.edges()]
-    edge_widths = [1 + 4 * w for w in edge_weights]
-
-    nx.draw_networkx_nodes(G, pos, node_color=node_colors, node_size=800, alpha=0.9, edgecolors="black")
-    nx.draw_networkx_edges(G, pos, width=edge_widths, edge_color="gray", alpha=0.6)
-    nx.draw_networkx_labels(G, pos, font_size=10, font_weight="bold")
-
-    edge_labels = nx.get_edge_attributes(G, "weight")
-    formatted_labels = {(u, v): f"{d:.2f}" for (u, v), d in edge_labels.items()}
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=formatted_labels, font_size=8)
-
-    plt.title("📘 Summary Similarity Graph (Colored by Community)", fontsize=14)
-    plt.axis("off")
-    plt.tight_layout()
-    plt.show()
 
 
 
@@ -140,7 +114,6 @@ def build_knowledge_graph(summary_path="summarized_IITB.csv",
 
 
 
-
     # Save graph
     os.makedirs(os.path.dirname(graph_path), exist_ok=True)
     nx.write_graphml(G, graph_path)
@@ -183,9 +156,10 @@ def build_knowledge_graph(summary_path="summarized_IITB.csv",
     print(f"\n📝 Saved sample summaries per community to: {test_path}")
 
 
-
     #generate community summaries
     summarize_communities(G, output_path=os.path.dirname(graph_path))
+
+
 
 if __name__ == "__main__":
     PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

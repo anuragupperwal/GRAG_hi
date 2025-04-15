@@ -39,13 +39,13 @@ print("Summarization Completed")
 # generate_embeddings(SUMMARY_PATH, EMBEDDING_PATH)
 # test_embeddings(EMBEDDING_PATH)
 
-build_knowledge_graph(
-    summary_path=SUMMARY_PATH,
-    embedding_path=EMBEDDING_PATH,
-    graph_path=GRAPH_PATH,
-    max_rows=100,
-    similarity_threshold=0.5 
-)
+# build_knowledge_graph(
+#     summary_path=SUMMARY_PATH,
+#     embedding_path=EMBEDDING_PATH,
+#     graph_path=GRAPH_PATH,
+#     max_rows=100,
+#     similarity_threshold=0.5 
+# )
 
 G = nx.read_graphml(GRAPH_PATH)
 summarize_communities(G, output_path_directory=SUMMARY_PATH)
