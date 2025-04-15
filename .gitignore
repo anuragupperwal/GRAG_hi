@@ -7,6 +7,7 @@ venv/
 indic_nlp_library/
 indic_nlp_resources/
 data/raw/
+data/knowledge \graph/
 data/processed/
-data/
 justForMe.md
+src/data/lib
