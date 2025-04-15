@@ -11,6 +11,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 from networkx.algorithms.community import greedy_modularity_communities
 from collections import defaultdict
 
+from community_summarization import summarize_communities
+
+
 def visualize_with_plotly(G):
     pos = nx.spring_layout(G)
     edge_x = []
@@ -56,6 +59,7 @@ def visualize_with_plotly(G):
                         yaxis=dict(showgrid=False, zeroline=False)))
     
     fig.show()
+
 def visualize_graph(G):
     plt.figure(figsize=(12, 8))
     # pos = nx.spring_layout(G, seed=42, k=0.4) #layout1
@@ -150,7 +154,7 @@ def build_knowledge_graph(summary_path="summarized_IITB.csv",
 
     print("Visualising graph:")
     # visualize_graph(G)
-    # visualize_with_plotly(G)
+    visualize_with_plotly(G)
 
     print(f"Total nodes: {G.number_of_nodes()}, Total edges: {G.number_of_edges()}")
     for u, v, data in list(G.edges(data=True))[:5]:
@@ -169,15 +173,19 @@ def build_knowledge_graph(summary_path="summarized_IITB.csv",
     summary_records = []
     for cid, summaries in community_groups.items():
         print(f"Community {cid} (Total {len(summaries)} summaries):")
-        for summary in summaries[:3]:  # show first 3
+        for summary in summaries:  # show first 3
             print("  🔹", summary.strip())
             summary_records.append({"Community": cid, "Summary": summary.strip()})
         print()
             # Save all shown summaries to CSV
-    test_path = os.path.join(os.path.dirname(graph_path), "summaries_test.csv")
+    test_path = os.path.join(os.path.dirname(graph_path), "per_communities_summaries_test.csv")
     pd.DataFrame(summary_records).to_csv(test_path, index=False)
     print(f"\n📝 Saved sample summaries per community to: {test_path}")
 
+
+
+    #generate community summaries
+    summarize_communities(G, output_path=os.path.dirname(graph_path))
 
 if __name__ == "__main__":
     PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
