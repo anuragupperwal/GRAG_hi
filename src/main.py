@@ -26,30 +26,30 @@ GRAPH_PATH = os.path.join(PROJECT_ROOT, "data/knowledge_graph/summary_graph.grap
 SUMMARY_PATH = os.path.join(PROJECT_ROOT, "data/knowledge_graph/")
 
 print("Running preprocessing")
-# preprocess_hindi_corpus(RAW_DATA_PATH, max_lines=1000, project_root=PROJECT_ROOT)
+preprocess_hindi_corpus(RAW_DATA_PATH, max_lines=5000, project_root=PROJECT_ROOT)
 
 print("Running summarization")
-# summarize_corpus(
-#     input_path=TOKENIZED_PATH,
-#     output_path=SUMMARY_PATH,
-#     chunk_size=5,
-#     max_lines=100
-# )
+summarize_corpus(
+    input_path=TOKENIZED_PATH,
+    output_path=SUMMARY_PATH,
+    chunk_size=5,
+    max_lines=5000
+)
 print("Summarization Completed")
 
-# generate_embeddings(SUMMARY_PATH, EMBEDDING_PATH)
+generate_embeddings(SUMMARY_PATH, EMBEDDING_PATH)
 # test_embeddings(EMBEDDING_PATH)
 
-# build_knowledge_graph(
-#     summary_path=SUMMARY_PATH,
-#     embedding_path=EMBEDDING_PATH,
-#     graph_path=GRAPH_PATH,
-#     max_rows=100,
-#     similarity_threshold=0.5 
-# )
+build_knowledge_graph(
+    summary_path=SUMMARY_PATH,
+    embedding_path=EMBEDDING_PATH,
+    graph_path=GRAPH_PATH,
+    max_rows=5000,
+    similarity_threshold=0.5 
+)
 
-# G = nx.read_graphml(GRAPH_PATH)
-# summarize_communities(G, output_path_directory=SUMMARY_PATH)
+G = nx.read_graphml(GRAPH_PATH)
+summarize_communities(G, output_path_directory=SUMMARY_PATH)
 
 # retrieve based on query
 query = input("Enter your query: ")
@@ -60,4 +60,4 @@ for idx, row in top_results.iterrows():
     print(f"Summary: {row['summary']}\n")
 
 
-# आईटी नौकरियों के बारे में आप क्या सोचते हैं?
+# Query: आईटी नौकरियों के बारे में आप क्या सोचते हैं?

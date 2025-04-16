@@ -1,10 +1,16 @@
 import os
 import faiss
+import re
 import pickle
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from .build_faiss_index import build_faiss_index
 from .query_expansion import expand_query_with_fasttext
+
+
+def filter_metadata_by_keywords(metadata, keywords):
+    pattern = "|".join(re.escape(word) for word in keywords)
+    return metadata[metadata["summary"].str.contains(pattern, case=False, na=False, regex=True)]
 
 def load_index_and_metadata(index_path, meta_path):
     index = faiss.read_index(index_path)
@@ -23,7 +29,7 @@ def search_index(index, embedding, metadata, top_k=5):
     results["score"] = distances[0]
     return results
 
-def retrieve_top_k_results(query, top_k=5):
+def retrieve_top_k_results(query, top_k=10):
     PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
     INDEX_PATH = os.path.join(PROJECT_ROOT, "data", "knowledge_graph", "community_faiss.index")
     META_PATH = os.path.join(PROJECT_ROOT, "data", "knowledge_graph", "community_meta.pkl")
@@ -31,11 +37,14 @@ def retrieve_top_k_results(query, top_k=5):
     build_faiss_index(index_path=INDEX_PATH, meta_path=META_PATH)
     
     index, metadata = load_index_and_metadata(INDEX_PATH, META_PATH)
-    
-    fasttext_path = os.path.join(PROJECT_ROOT, "models", "cc.hi.300.bin")
-    expanded_query = expand_query_with_fasttext(query, model_path=fasttext_path)
-    print(f"Expanded Query: {expanded_query}")
-    query_embedding = get_query_embedding(expanded_query)
+
+    # relevant_keywords = ["आईटी", "नौकरी", "शिक्षा", "वेतन", "तकनीक"]
+    # metadata = filter_metadata_by_keywords(metadata, relevant_keywords)
+
+    # fasttext_path = os.path.join(PROJECT_ROOT, "src", "models", "cc.hi.300.bin")
+    # expanded_query = expand_query_with_fasttext(query, model_path=fasttext_path)
+    # print(f"Expanded Query: {expanded_query}")
+    query_embedding = get_query_embedding(query)
     return search_index(index, query_embedding, metadata, top_k=top_k)
 
 

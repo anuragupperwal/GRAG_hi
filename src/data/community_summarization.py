@@ -52,7 +52,7 @@ def summarize_with_indicT5(texts, max_input_length=1024, max_output_length=256):
         summaries.append(summary)
     return summaries
 
-def recursive_summarize(sentences, chunk_size=10, max_tokens=1000):
+def recursive_summarize(sentences, chunk_size=10, max_tokens=5000):
     """
     Recursively summarize sentences until a compact final summary is obtained.
     """
@@ -67,7 +67,7 @@ def recursive_summarize(sentences, chunk_size=10, max_tokens=1000):
         # max_output_length = max(max_output_length, MIN_SUMMARY_LENGTH)   # minimum threshold to avoid empty summaries
 
         MIN_SUMMARY_LENGTH = 60
-        compression_ratio = 0.1
+        compression_ratio = 0.7
         if total_tokens < MIN_SUMMARY_LENGTH:
             max_output_length = MIN_SUMMARY_LENGTH
         else:
