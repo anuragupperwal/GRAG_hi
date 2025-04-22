@@ -1,14 +1,10 @@
 import os
 import pandas as pd
-from data.convert_to_csv import load_raw_data
 from data import remove_eng_lines, numerals
-import matplotlib.pyplot as plt
 from indicnlp.tokenize.sentence_tokenize import sentence_split
 
 # === CONFIG ===
 STOPWORDS_PATH = os.path.join(os.path.dirname(__file__), "stopwords-hi.txt")
-CHART_OUTPUT_PATH = "../../reports/figures/cleaning_pie_chart.png"
-
 
 def load_indic_stopwords(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -30,39 +26,34 @@ def sentence_tokenize_text_grouped(sentences):
     return tokenized
 
 
-def plot_cleaning_results(total_lines: int, cleaned_lines: int, save_path: str):
-    removed_lines = total_lines - cleaned_lines
-    labels = ['Cleaned & Retained', 'Removed as Noise/Junk']
-    sizes = [cleaned_lines, removed_lines]
-    explode = (0.05, 0.1)
-    colors = ['#4CAF50', '#F44336']
-
-    plt.figure(figsize=(6, 6))
-    plt.pie(sizes, explode=explode, labels=labels, colors=colors,
-            autopct='%1.1f%%', shadow=True, startangle=140)
-    plt.title('🧹 Cleaning Results: Hindi Monolingual Dataset')
-    plt.axis('equal')
-
-    os.makedirs(os.path.dirname(save_path), exist_ok=True)
-    plt.savefig(save_path)
-    plt.close()
-    print(f"Pie chart saved to {save_path}")
-
-
-def preprocess_hindi_corpus(RAW_DATA_PATH, max_lines=10000, stopwords_path=STOPWORDS_PATH, chart_path=CHART_OUTPUT_PATH, project_root=None):
+def preprocess_hindi_corpus(RAW_DATA_PATH, max_lines=10000, stopwords_path=STOPWORDS_PATH, project_root=None):
     """Runs the complete preprocessing pipeline step by step."""
 
     #absolute paths
     input1 = RAW_DATA_PATH
     print("this is the test print to check project_root", project_root)
-    output1 = os.path.join(project_root, "data/raw/monolingual-n/cleaned_output.csv")
-    output2 = os.path.join(project_root, "data/raw/monolingual-n/numeric_replaced.csv")
+    output1 = os.path.join(project_root, "data/raw/cleaned_output.csv")
+    output2 = os.path.join(project_root, "data/raw/numeric_replaced.csv")
     final_output = os.path.join(project_root, "data/processed/tokenized_IITB.csv")    
 
-    
-    # Step 1: Convert .hi file to CSV
-    # load_raw_data(input1)
-    raw_data = pd.read_csv(input1, nrows=max_lines)
+
+    #Step 1
+    # raw_data = pd.read_csv(input1, nrows=max_lines)
+    # read 100 lines after evrey 5000 lines
+    chunk_size = 5000
+    sample_size = 100
+    dfs = []
+    total_rows_read = 0
+    while total_rows_read < max_lines:
+        skip_rows = list(range(1, total_rows_read + chunk_size - sample_size + 1))
+        try:
+            chunk = pd.read_csv(input1, skiprows=skip_rows, nrows=sample_size)
+            dfs.append(chunk)
+            total_rows_read += chunk_size
+        except pd.errors.EmptyDataError:
+            break
+    raw_data = pd.concat(dfs, ignore_index=True)
+
 
     # Step 2: Remove English lines
     os.makedirs(os.path.dirname(output1), exist_ok=True)  # Ensure directory exists
@@ -70,15 +61,15 @@ def preprocess_hindi_corpus(RAW_DATA_PATH, max_lines=10000, stopwords_path=STOPW
 
     # Step 3: Convert numerics (123 → १२३)
     os.makedirs(os.path.dirname(output2), exist_ok=True) 
-    numerals.replace_numerics(output1, output2)
+    numerals.replace_numerics(output1, output2, max_lines=max_lines)
 
     # Step 4: Stopword removal
     raw_data = pd.read_csv(output2, nrows=max_lines)
-    total_lines = len(raw_data)
     sentences = raw_data['text'].fillna("").astype(str).tolist()
-    stopwords = load_indic_stopwords(stopwords_path)
-    cleaned_sentences = [remove_stopwords_indic(line, stopwords) for line in sentences]
-
+    # stopwords = load_indic_stopwords(stopwords_path)
+    # cleaned_sentences = [remove_stopwords_indic(line, stopwords) for line in sentences]
+    cleaned_sentences = sentences
+    
     # Step 5: Sentence tokenization
     tokenized_sentences = sentence_tokenize_text_grouped(cleaned_sentences)
     joined_sentences = [" <s> ".join(sent_list) for sent_list in tokenized_sentences]

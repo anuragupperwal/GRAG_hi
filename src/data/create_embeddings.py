@@ -3,9 +3,9 @@ import pandas as pd
 import numpy as np
 import os
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-INPUT_PATH = os.path.join(PROJECT_ROOT, "data/processed/summarized_IITB.csv")
-OUTPUT_PATH = os.path.join(PROJECT_ROOT, "data/processed/summarized_embeddings.npy")
+# PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# INPUT_PATH = os.path.join(PROJECT_ROOT, "data/processed/summarized_IITB.csv")
+# OUTPUT_PATH = os.path.join(PROJECT_ROOT, "data/processed/summarized_embeddings.npy")
 
 SUMMARY_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
@@ -13,7 +13,7 @@ SUMMARY_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     Converts each sentence into a dense vector of 384 dimensions
     row represents one sentence’s meaning captured in 384 numbers.
 '''
-def generate_embeddings(INPUT_PATH=INPUT_PATH, OUTPUT_PATH=OUTPUT_PATH, nrows=10000):
+def generate_embeddings(INPUT_PATH, OUTPUT_PATH, nrows=10000):
     df = pd.read_csv(INPUT_PATH, nrows=nrows)
     sentences = df["summary"].fillna("").astype(str).tolist()
     model = SentenceTransformer(SUMMARY_MODEL)
@@ -30,7 +30,7 @@ def test_embeddings(OUTPUT_PATH):
     print("Shape of embeddings:", embeddings.shape)
 
     # See a sample vector
-    print("\nSample embedding vector (first one):\n", embeddings[0])
+    # print("\nSample embedding vector (first one):\n", embeddings[0])
 
     # Check a few stats
     print("\nStats:")
@@ -39,6 +39,6 @@ def test_embeddings(OUTPUT_PATH):
     print("Mean:", np.mean(embeddings))
 
 
-if __name__ == "__main__":
-    generate_embeddings()
-    test_embeddings()
+# if __name__ == "__main__":
+#     generate_embeddings()
+#     test_embeddings()

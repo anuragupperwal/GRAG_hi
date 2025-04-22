@@ -1,5 +1,6 @@
 import os
 import torch
+import re
 import pandas as pd
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from tqdm import tqdm
@@ -10,21 +11,27 @@ import networkx as nx
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
-
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 MODEL_NAME = "csebuetnlp/mT5_multilingual_XLSum"  #"ai4bharat/IndicT5-Summarization"
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
+model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME).to(device)
 # model = model.to("cuda" if torch.cuda.is_available() else "cpu")
 
+def clean_chunk(text):
+    text = re.sub(r"\(.*?\)", "", text)  # Remove things like (BBC), (a.a), etc.
+    text = re.sub(r"[^a-zA-Z0-9\u0900-\u097F\s।,.!?]", "", text)  # Remove junk characters
+    text = re.sub(r"\s{2,}", " ", text)  # Collapse multiple spaces
+    return text.strip()
 
-def summarize_with_indicT5(texts, max_input_length=1024, max_output_length=256):
+
+def summarize_with_indicT5(texts, max_input_length=1024, max_output_length=512):
     """
     Summarize a list of Hindi texts using IndicT5
     """
     summaries = []
-    for text in tqdm(texts, desc="Summarizing without IndicT5"):
-        input_text = "summarize: " + text
+    for text in tqdm(texts, desc="Summarizing with mT5"):
+        input_text = text.strip()
         inputs = tokenizer(
             input_text,
             return_tensors="pt",
@@ -35,6 +42,8 @@ def summarize_with_indicT5(texts, max_input_length=1024, max_output_length=256):
         inputs = {k: v.to(model.device) for k, v in inputs.items()}
 
         try:
+            print("\n🔍 Summarizing:\n", input_text)
+            print("Token count:", len(tokenizer.encode(input_text)))
             outputs = model.generate(
                 input_ids=inputs['input_ids'],
                 attention_mask=inputs['attention_mask'],
@@ -50,9 +59,14 @@ def summarize_with_indicT5(texts, max_input_length=1024, max_output_length=256):
             summary = "[Error: Generation Failed]"
         
         summaries.append(summary)
+
+        if not summary.strip():
+            print("Empty summary generated. Input was:\n", input_text[:500])
+            summary = "[No summary generated]"
+
     return summaries
 
-def recursive_summarize(sentences, chunk_size=10, max_tokens=5000):
+def recursive_summarize(sentences, chunk_size=10, q=10000):
     """
     Recursively summarize sentences until a compact final summary is obtained.
     """
@@ -60,11 +74,6 @@ def recursive_summarize(sentences, chunk_size=10, max_tokens=5000):
     current_sentences = sentences[:]
     while len(current_sentences) > 1:
         chunks = [" ".join(current_sentences[i:i+chunk_size]) for i in range(0, len(current_sentences), chunk_size)]
-                
-        # avg_input_length = sum(len(tokenizer.encode(s)) for s in chunks) // len(chunks)
-        # max_output_length = int(avg_input_length * 1)  # 50% compression ratio
-        # MIN_SUMMARY_LENGTH = 60
-        # max_output_length = max(max_output_length, MIN_SUMMARY_LENGTH)   # minimum threshold to avoid empty summaries
 
         MIN_SUMMARY_LENGTH = 60
         compression_ratio = 0.7
@@ -73,21 +82,22 @@ def recursive_summarize(sentences, chunk_size=10, max_tokens=5000):
         else:
             max_output_length = max(int(total_tokens * compression_ratio), MIN_SUMMARY_LENGTH)
 
-        print(f"🧪 Total input tokens: {total_tokens} | Target summary tokens: {max_output_length}")
+        print(f"Total input tokens: {total_tokens} | Target summary tokens: {max_output_length}")
 
-        # current_sentences = summarize_with_indicT5(chunks, max_output_length=max_output_length)
-
-        # option 1.1.1
         current_sentences = []
         for chunk in chunks:
+            chunk = clean_chunk(chunk)
             input_len = min(len(tokenizer.encode(chunk)) + 20, 1024)
+            print("\n\nCHUNK TEXT:", chunk[:300])
+            print("Token count:", input_len)
             summary = summarize_with_indicT5([chunk], max_output_length=max_output_length)[0]
+            print("GENERATED SUMMARY:", summary)
             current_sentences.append(summary)
 
         # Optional exit condition
-        token_counts = [len(tokenizer.encode(s)) for s in current_sentences]
-        if sum(token_counts) <= max_tokens:
-            break
+        # token_counts = [len(tokenizer.encode(s)) for s in current_sentences]
+        # if sum(token_counts) <= max_tokens:
+        #     break
 
     return current_sentences
 
@@ -116,8 +126,8 @@ def summarize_communities(G, output_path_directory=None):
         summary_text = final_summary[0] if final_summary else "[No summary generated]"
         all_summaries[community_id] = summary_text
 
-        print(f"\n Final summary for Community {community_id}:")
-        print(summary_text)
+        # print(f"\n Final summary for Community {community_id}:")
+        # print(summary_text)
 
     if output_path_directory:
         # os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -130,9 +140,13 @@ def summarize_communities(G, output_path_directory=None):
 
 
 
-if __name__ == "__main__":
-    PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) #to go to GRAG_hi
-    GRAPH_PATH = os.path.join(PROJECT_ROOT, "data/knowledge_graph/summary_graph.graphml")
-    SUMMARY_PATH = os.path.join(PROJECT_ROOT, "data/knowledge_graph/")
-    G = nx.read_graphml(GRAPH_PATH)
-    summarize_communities(G, output_path_directory=SUMMARY_PATH)
+# if __name__ == "__main__":
+#     PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__)) 
+#     print(PROJECT_ROOT)
+#     # GRAPH_PATH = os.path.join(PROJECT_ROOT, "data/knowledge_graph/summary_graph.graphml")
+#     # SUMMARY_PATH = os.path.join(PROJECT_ROOT, "data/knowledge_graph/")
+
+#     GRAPH_PATH = os.path.join(PROJECT_ROOT, "summary_graph.graphml")
+#     SUMMARY_PATH = os.path.join(PROJECT_ROOT, "")
+#     G = nx.read_graphml(GRAPH_PATH)
+#     summarize_communities(G, output_path_directory=SUMMARY_PATH)
