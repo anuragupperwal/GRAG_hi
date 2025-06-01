@@ -20,7 +20,7 @@ model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME).to(device)
 
 def clean_chunk(text):
     text = re.sub(r"\(.*?\)", "", text)  # Remove things like (BBC), (a.a), etc.
-    text = re.sub(r"[^a-zA-Z0-9\u0900-\u097F\s।,.!?]", "", text)  # Remove junk characters
+    text = re.sub(r"[^\u0900-\u097F\s।.!?]", "", text)  # Remove junk characters
     text = re.sub(r"\s{2,}", " ", text)  # Collapse multiple spaces
     return text.strip()
 
@@ -66,6 +66,26 @@ def summarize_with_indicT5(texts, max_input_length=1024, max_output_length=512):
 
     return summaries
 
+def chunk_by_token_limit(sentences, max_tokens=450):
+    chunks = []
+    current_chunk = []
+    token_count = 0
+
+    for sent in sentences:
+        sent_tokens = len(tokenizer.encode(sent))
+        if token_count + sent_tokens > max_tokens:
+            if current_chunk:
+                chunks.append(" ".join(current_chunk))
+                current_chunk = []
+                token_count = 0
+        current_chunk.append(sent)
+        token_count += sent_tokens
+
+    if current_chunk:
+        chunks.append(" ".join(current_chunk))
+
+    return chunks
+
 def recursive_summarize(sentences, chunk_size=10, q=10000):
     """
     Recursively summarize sentences until a compact final summary is obtained.
@@ -73,8 +93,7 @@ def recursive_summarize(sentences, chunk_size=10, q=10000):
     total_tokens = sum(len(tokenizer.encode(s)) for s in sentences)
     current_sentences = sentences[:]
     while len(current_sentences) > 1:
-        chunks = [" ".join(current_sentences[i:i+chunk_size]) for i in range(0, len(current_sentences), chunk_size)]
-
+        chunks = chunk_by_token_limit(current_sentences, max_tokens=450)
         MIN_SUMMARY_LENGTH = 60
         compression_ratio = 0.7
         if total_tokens < MIN_SUMMARY_LENGTH:
@@ -87,7 +106,7 @@ def recursive_summarize(sentences, chunk_size=10, q=10000):
         current_sentences = []
         for chunk in chunks:
             chunk = clean_chunk(chunk)
-            input_len = min(len(tokenizer.encode(chunk)) + 20, 1024)
+            input_len = min(len(tokenizer.encode(chunk)) + 20, 512)
             print("\n\nCHUNK TEXT:", chunk[:300])
             print("Token count:", input_len)
             summary = summarize_with_indicT5([chunk], max_output_length=max_output_length)[0]
@@ -100,6 +119,22 @@ def recursive_summarize(sentences, chunk_size=10, q=10000):
         #     break
 
     return current_sentences
+
+
+def flat_summarize(sentences, max_chunk_tokens=500, max_output_tokens=256):
+    chunks = chunk_by_token_limit(sentences, max_tokens=max_chunk_tokens)
+    summaries = []
+    for chunk in chunks:
+        chunk = clean_chunk(chunk)
+        input_len = min(len(tokenizer.encode(chunk)) + 20, 512)
+        print("\nCHUNK TEXT:", chunk[:300])
+        print("Token count:", input_len)
+        summary = summarize_with_indicT5([chunk], max_output_length=max_output_tokens)[0]
+        print("GENERATED SUMMARY:", summary)
+        summaries.append(summary)
+    return " ".join(summaries)
+
+
 
 def get_top_nodes(G, node_list, top_k_ratio=0.9):
     """
@@ -120,9 +155,12 @@ def summarize_communities(G, output_path_directory=None):
 
     all_summaries = {}
     for community_id, node_list in community_groups.items():
+        print("\nSummarising community id:", community_id)
+
         top_nodes = get_top_nodes(G, node_list)
         top_summaries = [G.nodes[n]['text'] for n in top_nodes]
-        final_summary = recursive_summarize(top_summaries)
+        # final_summary = recursive_summarize(top_summaries)
+        final_summary = flat_summarize(top_summaries)
         summary_text = final_summary[0] if final_summary else "[No summary generated]"
         all_summaries[community_id] = summary_text
 
@@ -140,13 +178,17 @@ def summarize_communities(G, output_path_directory=None):
 
 
 
-# if __name__ == "__main__":
-#     PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__)) 
-#     print(PROJECT_ROOT)
-#     # GRAPH_PATH = os.path.join(PROJECT_ROOT, "data/knowledge_graph/summary_graph.graphml")
-#     # SUMMARY_PATH = os.path.join(PROJECT_ROOT, "data/knowledge_graph/")
+if __name__ == "__main__":
+    PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__)) 
+    print(PROJECT_ROOT)
+    # GRAPH_PATH = os.path.join(PROJECT_ROOT, "data/knowledge_graph/summary_graph.graphml")
+    # SUMMARY_PATH = os.path.join(PROJECT_ROOT, "data/knowledge_graph/")
 
-#     GRAPH_PATH = os.path.join(PROJECT_ROOT, "summary_graph.graphml")
-#     SUMMARY_PATH = os.path.join(PROJECT_ROOT, "")
-#     G = nx.read_graphml(GRAPH_PATH)
-#     summarize_communities(G, output_path_directory=SUMMARY_PATH)
+    GRAPH_PATH = os.path.join(PROJECT_ROOT, "summary_graph.graphml")
+    SUMMARY_PATH = os.path.join(PROJECT_ROOT, "")
+    G = nx.read_graphml(GRAPH_PATH)
+    summarize_communities(G, output_path_directory=SUMMARY_PATH)
+
+
+
+    

@@ -72,7 +72,7 @@ def preprocess_hindi_corpus(RAW_DATA_PATH, max_lines=10000, stopwords_path=STOPW
     
     # Step 5: Sentence tokenization
     tokenized_sentences = sentence_tokenize_text_grouped(cleaned_sentences)
-    joined_sentences = [" <s> ".join(sent_list) for sent_list in tokenized_sentences]
+    joined_sentences = [" ".join(sent_list) for sent_list in tokenized_sentences]
 
     os.makedirs(os.path.dirname(final_output), exist_ok=True)
     pd.DataFrame({"text": joined_sentences}).to_csv(final_output, index=False, encoding='utf-8')
